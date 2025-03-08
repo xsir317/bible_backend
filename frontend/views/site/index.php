@@ -1,0 +1,1 @@
+<a href="/site/board">棋盘</a>

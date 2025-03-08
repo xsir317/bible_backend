@@ -1,0 +1,103 @@
+    div.item {
+        padding: 4px;
+        width: 230px;
+    }
+
+    div.item .nickname {
+        max-width: 170px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        line-height: 2rem;
+    }
+
+    #control-bar {
+        margin: 0;
+        padding: 0;
+        position: fixed;
+        top: -1000px;
+        left: 200px;
+        width: 550px;
+        height: 705px;
+        border: #f99302 2px solid;
+    }
+
+    #video {
+        border: 0;
+        width: 400px;
+        height: 700px;
+        background: #9d9d9d;
+    }
+
+    #control {
+        border: 0;
+        width: 140px;
+        height: 700px;
+        background: #9d9d9d;
+    }
+
+    #control-close {
+        position: relative;
+        left: 500px;
+        top: -700px;
+    }
+
+    button.hot {
+        font-size: 10px !important;
+        padding: 0;
+    }
+    .item {
+        width: 250px;
+        float: left;
+        text-align: center;
+        margin-left: 3px;
+    }
+
+    .nickname {
+        max-width: 70px;
+        overflow: hidden;
+    }
+    .font-white{
+        color: white;
+    }
+    .player_cover{
+        height:300px;
+    }
+    .player{
+        height: 100%;
+    }
+    .interval{
+        margin-top: 10px;
+    }
+    .row100{
+        width: 100%;
+    }
+    .item-field{
+        margin-bottom: 5px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+    }
+    .item-label{
+        padding: 5px 0 10px 0;
+    }
+    .jishi-item{
+        position: fixed;
+        top: 40px;
+        right: 40px;
+        opacity: 5;
+        width: 190px;
+        background: #201e1e;
+        color: #fff;
+        border-radius: 15px;
+        font-size: medium;
+        padding: 20px 10px 10px 10px;
+    }
+    .font-red{
+        color: red;
+        font-weight: 600;
+        font-size: 3em;
+    }
+    .check-desc{
+        margin-bottom: 1em;
+    }
