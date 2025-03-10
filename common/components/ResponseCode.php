@@ -28,5 +28,7 @@ class ResponseCode
     const AUTH_FAILED = 403;
 
     const NEED_INIT = 408;
+    //TODO 时间戳有问题返回这个
+    const NEED_TIME_CHECK = 409;
 
 }
