@@ -13,6 +13,12 @@ class SystemController extends ClientController
         return  $this->renderJSON($init_token);
     }
 
+    public function actionTime(){
+        return  $this->renderJSON([
+            'time' => time()
+        ]);
+    }
+
     /**
      * @return void|\yii\console\Response|\yii\web\Response
      */
