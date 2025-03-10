@@ -34,6 +34,7 @@ class ContentController extends ClientController
 
         //TODO 获取数据的放到repo里去
         $verses = BibleVerses::find()
+            ->select(['id','verse_num','content'])
             ->where([
                 'version' => $version,
                 'book_id' => $book_id,
