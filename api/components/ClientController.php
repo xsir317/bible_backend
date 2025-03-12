@@ -21,6 +21,7 @@ class ClientController extends Controller
     private $ignore_check_header = [
         'common/system/init',
         'common/system/set-key',
+        'common/system/time',
     ];
     private $decrypted_params = [];
     public $enableCsrfValidation = false;

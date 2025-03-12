@@ -52,7 +52,7 @@ class ClientAuthHelper
             return false;
         }
         \Yii::$app->redis->hDel("sess:{$session_id}", 'private');
-        openssl_private_decrypt(base64_decode($encrypted_key), $decryptedKey, $privateKey);
+        openssl_private_decrypt(base64_decode($encrypted_key), $decryptedKey, $privateKey,OPENSSL_PKCS1_OAEP_PADDING);
 
         if(strlen($decryptedKey) != static::AES_KEY_LEN){
             return false;
@@ -110,7 +110,7 @@ class ClientAuthHelper
                 return false;
             }
 
-            if(!self::checkSignature($headers['timestamp'] , $headers['signature'], $aes_key, $uri , $post_data))
+            if(!self::checkSignature($headers['timestamp'] , $headers['checksum'], $aes_key, $uri , $post_data))
             {
                 return false;
             }
