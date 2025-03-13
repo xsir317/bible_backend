@@ -15,7 +15,6 @@ class Controller extends \yii\web\Controller
 
     protected function renderJSON($data=[], $msg ="ok", $code = 200)
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         \Yii::$app->response->data = [
             "code" => $code,
             "msg"   =>  $msg,

@@ -32,6 +32,7 @@ class ClientController extends Controller
         //对不上的， 可能是非法请求
         //对上了， 就 decode 一下， 请求参数存到static 里。
         $route = $this->getRoute();
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!in_array($route,$this->ignore_check_header))
         {
             $this->decrypted_params = ClientAuthHelper::checkAccessToken(\Yii::$app->request);
