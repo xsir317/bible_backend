@@ -28,6 +28,17 @@ return [
             'csrfParam' => '_csrf-api',
             'enableCookieValidation' => false,
         ],
+        'response' => [
+            'formatters'=>[
+                'json' => [
+                    'class' => 'yii\web\JsonResponseFormatter',
+                    'prettyPrint' => true,
+                ],
+                'secret' => [
+                    'class' => 'api\components\EncryptFormatter'
+                ],
+            ]
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [

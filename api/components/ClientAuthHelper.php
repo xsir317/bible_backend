@@ -21,6 +21,7 @@ use yii\web\Request;
 class ClientAuthHelper
 {
     private static $session_id = '';
+    private static $aes_key = '';
     const AES_KEY_LEN = 32;
     const SESSION_LIFE_TIME = 86400 * 30;
 
@@ -97,6 +98,7 @@ class ClientAuthHelper
         if(!$session_id){
             return false;
         }
+        self::$session_id = $session_id;
 
         $uri = $request->getUrl();
         $post_data = $request->getRawBody();
@@ -106,6 +108,7 @@ class ClientAuthHelper
             if(!$aes_key){
                 return false;
             }
+            self::$aes_key = $aes_key;
             if(!self::checkTimestamp($headers['timestamp'] ?? 0)){
                 return false;
             }
@@ -124,8 +127,19 @@ class ClientAuthHelper
         }else{
             $decryptedData = $post_data;
         }
-        self::$session_id = $session_id;
         return @json_decode($decryptedData, true);
+    }
+
+    public static function encrypt($string){
+        if(empty(self::$aes_key)){
+            return false;
+        }
+        $iv = openssl_random_pseudo_bytes(16); // 生成 16 字节 IV
+
+        $encryptedData = openssl_encrypt($string, 'AES-256-CBC', self::$aes_key, OPENSSL_RAW_DATA, $iv);
+
+        // Base64 编码 IV 和 加密数据，格式 "IV:密文"
+        return base64_encode($iv) . ":" . base64_encode($encryptedData);
     }
 
     private static function checkSignature($timestamp, $signature, $secret ,$uri, $post_data)

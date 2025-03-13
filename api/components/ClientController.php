@@ -39,6 +39,7 @@ class ClientController extends Controller
             {
                 return false;
             }
+            \Yii::$app->response->format = 'secret';
         }
         /* TODO 更新下活跃时间*/
         return parent::beforeAction($action);
