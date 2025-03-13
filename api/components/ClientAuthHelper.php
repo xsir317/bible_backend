@@ -116,10 +116,10 @@ class ClientAuthHelper
             }
             //TODO 可以不要每次都操作
             \Yii::$app->redis->expire("sess:{$session_id}",static::SESSION_LIFE_TIME);
-            $decodedData = base64_decode($post_data);
-            $ivLength = openssl_cipher_iv_length('AES-256-CBC');
-            $iv = substr($decodedData, 0, $ivLength);
-            $cipherText = substr($decodedData, $ivLength);
+            $tmp_split = explode(':' , $post_data);
+
+            $iv = base64_decode($tmp_split[0]);
+            $cipherText = base64_decode($tmp_split[1]);
             $decryptedData = openssl_decrypt($cipherText, 'AES-256-CBC', $aes_key, OPENSSL_RAW_DATA, $iv);
         }else{
             $decryptedData = $post_data;
