@@ -38,7 +38,7 @@ class ClientController extends Controller
             $this->decrypted_params = ClientAuthHelper::checkAccessToken(\Yii::$app->request);
             if(YII_ENV_PROD && empty($this->decrypted_params) )
             {
-                return false;
+                return $this->renderJSON([],'need init' , ResponseCode::NEED_INIT);
             }
             \Yii::$app->response->format = 'secret';
         }
