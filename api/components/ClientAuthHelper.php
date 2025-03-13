@@ -120,7 +120,7 @@ class ClientAuthHelper
             $ivLength = openssl_cipher_iv_length('AES-256-CBC');
             $iv = substr($decodedData, 0, $ivLength);
             $cipherText = substr($decodedData, $ivLength);
-            $decryptedData = openssl_decrypt($cipherText, 'AES-256-CBC', $aes_key, 0, $iv);
+            $decryptedData = openssl_decrypt($cipherText, 'AES-256-CBC', $aes_key, OPENSSL_RAW_DATA, $iv);
         }else{
             $decryptedData = $post_data;
         }
