@@ -17,9 +17,9 @@ class EncryptFormatter extends JsonResponseFormatter
                 $this->contentType = self::CONTENT_TYPE_JSON;
                 $response->getHeaders()->set('Content-Type', $this->contentType);
 
-                $response->content = [
+                $response->content = json_encode([
                     'encrypted_data' => $encoded
-                ];
+                ]);
             }
         }
     }
