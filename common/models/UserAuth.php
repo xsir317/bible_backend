@@ -20,6 +20,7 @@ use Yii;
 class UserAuth extends \yii\db\ActiveRecord
 {
     const LOGIN_TYPE_PHONE = 'phone';
+    const LOGIN_TYPE_EMAIL = 'email';
     const LOGIN_TYPE_WX = 'weixin';
     const LOGIN_TYPE_WEIBO = 'weibo';
 

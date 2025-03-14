@@ -11,6 +11,7 @@ namespace api\modules\user\controllers;
 
 use common\components\ResponseCode;
 use common\models\UserAuth;
+use common\repository\EmailRepo;
 use common\repository\SmsRepo;
 use common\repository\UserRepo;
 use api\components\ClientAuthHelper;
@@ -102,10 +103,28 @@ class IdentityController extends ClientController
         ]);
     }
 
+    public function actionEmailLogin()
+    {
+        $email = $this->getDecryptedParam('email');
+        $_code = trim($this->getDecryptedParam('code'));
+        $from = trim($this->getDecryptedParam('from'));
+        $from = $from ? : 'client';
+        $ad_channel = trim($this->getDecryptedParam('ad_channel'));
+        $inviter = trim($this->getDecryptedParam('inviter'));
+        $inviter_uid = $inviter ? UserRepo::code2uid($inviter) : 0;
+        $user = UserRepo::email_login($email,$_code,$inviter_uid,$from,$ad_channel,\Yii::$app->request->getRemoteIP());
 
-    public function actionEmailLogin(){
-        
+        if(!$user)
+        {
+            return $this->renderJSON([],UserRepo::getLastErrorMsg(),ResponseCode::UNKNOWN_ERROR);
+        }
+
+        ClientAuthHelper::setCurrUser($user->id);
+        return $this->renderJSON([
+            'user' => UserRepo::single_user_query($this->_user()->id)
+        ]);
     }
+
     /**
      * 微信登录， 暂时搁置
      */
@@ -167,6 +186,30 @@ class IdentityController extends ClientController
         $code = SmsRepo::sendVerifyCode($phone_number,$type,\Yii::$app->request->getRemoteIP());
         $response = "发送成功";
         if(YII_DEBUG){
+            $response .= '调试-'.$code;
+        }
+        return $this->renderJSON([],$response);
+    }
+
+    public function actionSendEmail()
+    {
+        $email = trim($this->getDecryptedParam('email'));
+        $type = trim($this->getDecryptedParam('type'));
+        if($type == 'verify')
+        {
+            if(!$this->_user())
+            {
+                return $this->renderJSON([],'请先登录',ResponseCode::NOT_LOGIN);
+            }
+            $email = $this->_user()->email;
+        }
+        if(!$email)
+        {
+            return $this->renderJSON([],'没有电话号码',ResponseCode::INPUT_ERROR);
+        }
+        $code = EmailRepo::sendVerifyCode($email,$type,\Yii::$app->request->getRemoteIP());
+        $response = "发送成功";
+        if(1){
             $response .= '调试-'.$code;
         }
         return $this->renderJSON([],$response);

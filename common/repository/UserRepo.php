@@ -92,6 +92,43 @@ class UserRepo extends BaseRepo
         return self::_err('无此用户');
     }
 
+    public static function email_login($email, $code, $inviter_uid, $reg_from, $reg_ad_channel, $ip='')
+    {
+        if(!$email)
+        {
+            return self::_err('请输入Email');
+        }
+        if(!$code)
+        {
+            return self::_err('请输入校验码');
+        }
+        if($ip && !self::recent_history_check($ip))
+        {
+            return self::_err('登录过于频繁');
+        }
+        if(!SmsRepo::checkVerifyCode($email,$code,'login'))
+        {
+            return self::_err('验证码错误');
+        }
+        $uid = self::getUidByAuth(UserAuth::LOGIN_TYPE_EMAIL ,$email);
+        if($uid){
+            $user = Users::findOne($uid);
+        }else{
+            $user = self::createInstance(
+                '-' , //TODO 随机给个名字 TODO 可修改昵称 和 密码
+                UserAuth::LOGIN_TYPE_EMAIL ,
+                $email ,
+                '',
+                [ 'from' => $reg_from , 'inviter' => $inviter_uid , 'ad_channel' => $reg_ad_channel, 'ip' => $ip],
+            );
+        }
+        if($user)
+        {
+            return $user;
+        }
+        return self::_err('无此用户');
+    }
+
     public static function oauth_login($type , $token){
 
     }
