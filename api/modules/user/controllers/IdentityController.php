@@ -201,7 +201,7 @@ class IdentityController extends ClientController
             {
                 return $this->renderJSON([],'请先登录',ResponseCode::NOT_LOGIN);
             }
-            $email = $this->_user()->email;
+            $email = $this->_user()->getEmail();
         }
         if(!$email)
         {

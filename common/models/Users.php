@@ -62,4 +62,12 @@ class Users extends \yii\db\ActiveRecord
     public function getInviteCode(){
         return StringHelper::num2code($this->id,self::USR_INVITE_MAP);
     }
+
+    public function getEmail(){
+        $email_auth = UserAuth::find()
+            ->where(['type' => UserAuth::LOGIN_TYPE_EMAIL , 'uid' => $this->id])
+            ->limit(1)
+            ->one();
+        return $email_auth->unionid ?? '';
+    }
 }
