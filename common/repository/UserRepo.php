@@ -306,22 +306,11 @@ class UserRepo extends BaseRepo
         if(!$user){
             return null;
         }
-        $return = [
+        return [
             'id' => $user->id,
             'nickname' => $user->nickname,
             'coins' => $user->coins,
-            'grade' => $user->grade,
-            'age' => 14,
+            'avatar' => '/avatar1.png',
         ];
-        $detail = UserDetails::find()
-            ->where(['uid' => $uid])
-            ->one();
-        $return['detail'] = $detail ? [
-            'realname' => $detail->realname,
-            'contact' => $detail->contact,
-            'contact_backup' => $detail->contact_backup,
-            'comment' => $detail->comment,
-        ] : [];
-        return $return;
     }
 }
