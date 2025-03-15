@@ -205,7 +205,7 @@ class IdentityController extends ClientController
         }
         if(!$email)
         {
-            return $this->renderJSON([],'没有电话号码',ResponseCode::INPUT_ERROR);
+            return $this->renderJSON([],'没有Email',ResponseCode::INPUT_ERROR);
         }
         $code = EmailRepo::sendVerifyCode($email,$type,\Yii::$app->request->getRemoteIP());
         $response = "发送成功";
