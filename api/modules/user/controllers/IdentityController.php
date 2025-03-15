@@ -102,6 +102,10 @@ class IdentityController extends ClientController
         ]);
     }
 
+
+    public function actionEmailLogin(){
+        
+    }
     /**
      * 微信登录， 暂时搁置
      */
