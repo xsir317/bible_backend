@@ -121,7 +121,7 @@ class IdentityController extends ClientController
 
         ClientAuthHelper::setCurrUser($user->id);
         return $this->renderJSON([
-            'user' => UserRepo::single_user_query($this->_user()->id)
+            'user' => $user->toArray(['id' ,'nickname'])
         ]);
     }
 
