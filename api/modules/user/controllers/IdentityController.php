@@ -212,7 +212,7 @@ class IdentityController extends ClientController
         if(1){
             $response .= '调试-'.$code;
         }
-        return $this->renderJSON([],$response);
+        return $this->renderJSON(['msg' => $response],$response);
     }
 
     public function actionLogout()
