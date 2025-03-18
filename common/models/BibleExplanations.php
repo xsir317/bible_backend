@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "bible_explanations".
  *
- * @property int $verse_id
- * @property string $lang 语言代码
- * @property string $model 模型标识
- * @property string $content
+ * @property int $id
+ * @property int $passage_id 关联段落ID
+ * @property string $lang 语言代码(zh-CN/en等)
+ * @property string $model 模型标识(gpt-4等)
+ * @property string $content 解释内容
+ * @property string|null $context_verses 自动生成章节范围
  * @property string|null $updated_at
  *
- * @property BibleVerses $verse
+ * @property BiblePassages $passage
  */
 class BibleExplanations extends \yii\db\ActiveRecord
 {
@@ -31,14 +33,15 @@ class BibleExplanations extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['verse_id', 'lang', 'model', 'content'], 'required'],
-            [['verse_id'], 'integer'],
+            [['passage_id', 'lang', 'model', 'content'], 'required'],
+            [['passage_id'], 'integer'],
             [['content'], 'string'],
             [['updated_at'], 'safe'],
             [['lang'], 'string', 'max' => 5],
             [['model'], 'string', 'max' => 50],
-            [['verse_id', 'lang', 'model'], 'unique', 'targetAttribute' => ['verse_id', 'lang', 'model']],
-            [['verse_id'], 'exist', 'skipOnError' => true, 'targetClass' => BibleVerses::class, 'targetAttribute' => ['verse_id' => 'id']],
+            [['context_verses'], 'string', 'max' => 255],
+            [['passage_id', 'lang', 'model'], 'unique', 'targetAttribute' => ['passage_id', 'lang', 'model']],
+            [['passage_id'], 'exist', 'skipOnError' => true, 'targetClass' => BiblePassages::class, 'targetAttribute' => ['passage_id' => 'id']],
         ];
     }
 
@@ -48,21 +51,23 @@ class BibleExplanations extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'verse_id' => 'Verse ID',
+            'id' => 'ID',
+            'passage_id' => 'Passage ID',
             'lang' => 'Lang',
             'model' => 'Model',
             'content' => 'Content',
+            'context_verses' => 'Context Verses',
             'updated_at' => 'Updated At',
         ];
     }
 
     /**
-     * Gets query for [[Verse]].
+     * Gets query for [[Passage]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getVerse()
+    public function getPassage()
     {
-        return $this->hasOne(BibleVerses::class, ['id' => 'verse_id']);
+        return $this->hasOne(BiblePassages::class, ['id' => 'passage_id']);
     }
 }
