@@ -2,6 +2,7 @@
 namespace common\components\llm;
 
 use common\components\llm\adapters\Adapter;
+use common\repository\LogRepo;
 use yii\base\Component;
 
 /**
@@ -70,6 +71,7 @@ class LLMService extends Component
 
     // 响应标准化
     private function normalizeResponse($rawData) {
+        LogRepo::file_log( \Yii::$app->getRuntimePath() . '/post.log' , json_encode($rawData));
         return [
             'content' => $rawData['output']['text'] ?? '',
             'usage' => [
