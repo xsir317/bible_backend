@@ -7,7 +7,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
-class TencentHunyuanAdapter
+class TencentHunyuanAdapter extends Adapter
 {
     const API_ENDPOINT = 'https://hunyuan.tencent.com/api/v3/chat/completions';
 

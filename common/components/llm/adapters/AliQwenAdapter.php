@@ -5,7 +5,7 @@ namespace common\components\llm\adapters;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
-class AliQwenAdapter
+class AliQwenAdapter extends Adapter
 {
     const API_ENDPOINT = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
 

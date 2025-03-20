@@ -1,6 +1,7 @@
 <?php
 namespace common\components\llm;
 
+use common\components\llm\adapters\Adapter;
 use yii\base\Component;
 
 /**
@@ -36,6 +37,9 @@ class LLMService extends Component
             }
 
             $adapterClass = __NAMESPACE__ . '\\adapters\\' . $this->adapterMap[$modelType];
+            /**
+             * @var $adapter Adapter
+             */
             $adapter = new $adapterClass();
 
             // 统一输入预处理
