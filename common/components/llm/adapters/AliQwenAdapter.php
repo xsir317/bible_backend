@@ -10,7 +10,7 @@ class AliQwenAdapter extends Adapter
     //参考 https://help.aliyun.com/zh/model-studio/developer-reference/deepseek?spm=a2c4g.11186623.help-menu-2400256.d_3_3_1.3cea47bb8RnMlm#3f350ac2c3is6
     const API_ENDPOINT = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
 
-    public function execute($prompt, $params) {
+    public function execute($prompt, $params , $model = 'deepseek-r1') {
         $client = new Client();
 
         try {
@@ -20,7 +20,7 @@ class AliQwenAdapter extends Adapter
                     'Content-Type' => 'application/json'
                 ],
                 'json' => [
-                    'model' => 'deepseek-r1',
+                    'model' => $model,
                     //'model' => 'deepseek-r1-distill-llama-70b',
                     'input' => [
                         'messages' => [

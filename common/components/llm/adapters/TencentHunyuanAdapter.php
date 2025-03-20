@@ -11,7 +11,7 @@ class TencentHunyuanAdapter extends Adapter
 {
     const API_ENDPOINT = 'https://hunyuan.tencent.com/api/v3/chat/completions';
 
-    public function execute($prompt, $params) {
+    public function execute($prompt, $params , $model = 'deepseek-r1') {
         $client = new Client();
 
         try {
@@ -27,7 +27,7 @@ class TencentHunyuanAdapter extends Adapter
                     'stream' => false,
                     'model_params' => array_merge([
                         'temperature' => 0.8,
-                        'max_tokens' => 1500
+                        'max_tokens' => 3000
                     ], $params)
                 ],
                 'http_errors' => false // 禁用自动抛出 4xx/5xx 异常
