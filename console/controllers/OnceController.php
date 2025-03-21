@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\models\BiblePassages;
 use common\models\BibleVerses;
 use common\repository\ContentRepo;
 use yii\console\Controller;
@@ -61,5 +62,18 @@ EOF;
                 echo $content;exit;
             }
         }
+    }
+
+    private function saveLLMResponse($response ,$version , $book_id , $chapter ){
+        $decode = @json_decode($response);
+
+        $passage = BiblePassages::find()
+            ->where([
+                'version' => $version,
+                'book_id' => $book_id,
+                'chapter_num' => $chapter,
+                'start_verse' =>
+                'end_verse'
+            ])
     }
 }
