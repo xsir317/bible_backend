@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\models\BibleExplanations;
 use common\models\BiblePassages;
 use common\models\BibleVerses;
 use common\repository\ContentRepo;
@@ -64,16 +65,45 @@ EOF;
         }
     }
 
-    private function saveLLMResponse($response ,$version , $book_id , $chapter ){
+    private function saveLLMResponse($response ,$version , $book_id , $chapter ,$model_name){
+        $lang = 'zh-cn';
         $decode = @json_decode($response);
-
-        $passage = BiblePassages::find()
-            ->where([
-                'version' => $version,
-                'book_id' => $book_id,
-                'chapter_num' => $chapter,
-                'start_verse' =>
-                'end_verse'
-            ])
+        foreach ($decode as $item){
+            if(empty($item['explain'])) continue;
+            //找对应的passage
+            $passage = BiblePassages::find()
+                ->where([
+                    'version' => $version,
+                    'book_id' => $book_id,
+                    'chapter_num' => $chapter,
+                    'start_verse' => $item['verse_start'],
+                    'end_verse' =>  $item['verse_end'],
+                ])
+                ->limit(1)
+                ->one();
+            if(!$passage){
+                $passage = new BiblePassages();
+                $passage->version = $version;
+                $passage->book_id = $book_id;
+                $passage->chapter_num = $chapter;
+                $passage->start_verse =  $item['verse_start'];
+                $passage->end_verse = $item['verse_end'];
+                $passage->token_count = 0;//TODO 这个暂时不重要，以后再说
+                $passage->save();
+            }
+            //找解释 , TODO 前期只搞中文的，以后再考虑别的。
+            $explain = BibleExplanations::find()->where(['passage_id' => $passage->id , 'lang' => $lang])
+                ->limit(1) ->one();
+            if(!$explain){
+                $explain = new BibleExplanations();
+                $explain->passage_id = $passage->id;
+                $explain->lang = $lang;
+                $explain->model = $model_name;
+                $explain->content = $item['explain'];
+                $explain->context_verses = "{$passage->start_verse}-{$passage->end_verse}";
+                $explain->updated_at = date('Y-m-d H:i:s');
+                $explain->save();
+            }
+        }
     }
 }
