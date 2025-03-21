@@ -4,6 +4,8 @@ namespace api\modules\contents\controllers;
 
 use api\components\ClientController;
 use common\components\ResponseCode;
+use common\models\BibleExplanations;
+use common\models\BiblePassages;
 use common\models\BibleVerses;
 use common\repository\ContentRepo;
 
@@ -42,8 +44,20 @@ class ContentController extends ClientController
             ])
             ->asArray()
             ->all();
+        //分段
+        $explains = BiblePassages::find()
+            ->select(['start_verse','end_verse','content as explain_txt'])
+            ->leftJoin(['x' => BibleExplanations::tableName()] , 'x.passage_id=bible_passages.id')
+            ->where([
+                'bible_passages.version' => $version,
+                'bible_passages.book_id' => $book_id,
+                'bible_passages.chapter_num' => $chapter_id
+            ])
+            ->asArray()
+            ->all();
         return $this->renderJSON([
-            'verses' => $verses
+            'verses' => $verses,
+            'explains' => $explains
         ]);
     }
 }
