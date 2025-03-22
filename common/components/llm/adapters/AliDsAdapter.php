@@ -5,15 +5,16 @@ namespace common\components\llm\adapters;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
-class AliQwenAdapter extends Adapter
+class AliDsAdapter extends Adapter
 {
+    const ENDPOINT = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
     //参考 https://help.aliyun.com/zh/model-studio/developer-reference/deepseek?spm=a2c4g.11186623.help-menu-2400256.d_3_3_1.3cea47bb8RnMlm#3f350ac2c3is6
-    const ENDPOINT = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+    //ali 不同的模型输入格式也不同， 必须分拆不同的 Adapter
 
-    public function execute($prompt, $params , $model = 'qwen-plus') {
+    public function execute($prompt, $params , $model = 'deepseek-r1') {
         $client = new Client();
         if(empty($model)){
-            $model = 'qwen-plus';
+            $model = 'deepseek-r1';
         }
 
         try {
@@ -25,8 +26,10 @@ class AliQwenAdapter extends Adapter
                 'json' => [
                     'model' => $model,
                     //'model' => 'deepseek-r1-distill-llama-70b',
-                    'messages' => [
-                        ['role' => 'user', 'content' => $prompt]
+                    'input' => [
+                        'messages' => [
+                            ['role' => 'user', 'content' => $prompt]
+                        ]
                     ],
                     'parameters' => array_merge([
                         'temperature' => 0.7,
@@ -48,10 +51,6 @@ class AliQwenAdapter extends Adapter
             $text = '';
             if(!empty($responseData['choices']) && !empty($responseData['choices'][0]['message'])){
                 $text = $responseData['choices'][0]['message']['content'] ?? '';
-                $text = trim($text ,'`');
-                if(preg_match('/^([^\[]+)/',$text,$match)){
-                    $text = substr($text , strlen($match[1]));
-                }
             }
             return [
                 'usage' => $responseData['usage'] ?? [],

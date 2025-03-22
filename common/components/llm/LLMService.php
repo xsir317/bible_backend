@@ -12,6 +12,7 @@ class LLMService extends Component
 {
     // 支持模型类型常量
     const MODEL_ALI_QWEN = 'ali_qwen';
+    const MODEL_ALI_DS = 'ali_ds';
     const MODEL_TENCENT_HUNYUAN = 'tencent_hunyuan';
 
     // 统一响应格式
@@ -27,11 +28,12 @@ class LLMService extends Component
     // 模型适配器映射
     private $adapterMap = [
         self::MODEL_ALI_QWEN => 'AliQwenAdapter',
+        self::MODEL_ALI_DS => 'AliDsAdapter',
         self::MODEL_TENCENT_HUNYUAN => 'TencentHunyuanAdapter',
     ];
 
     // 统一调用入口
-    public function generate($modelType, $prompt, $params = []) {
+    public function generate($modelType, $prompt, $params = [] ,$model = '') {
         try {
             if (!isset($this->adapterMap[$modelType])) {
                 throw new \Exception("Unsupported model type");
@@ -47,7 +49,7 @@ class LLMService extends Component
             $processedPrompt = $this->preprocessPrompt($prompt);
 
             // 执行调用
-            $rawResponse = $adapter->execute($processedPrompt, $params);
+            $rawResponse = $adapter->execute($processedPrompt, $params,$model);
 
             // 统一响应处理
             return $this->formatResponse(
@@ -66,7 +68,7 @@ class LLMService extends Component
     // 输入预处理（圣经场景优化）
     private function preprocessPrompt($prompt) {
         // 添加圣经解读专用提示词
-        return "你是一个圣经研究专家，请用中文回答以下问题：\n" . $prompt;
+        return $prompt;
     }
 
     // 响应标准化

@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\components\llm\LLMService;
 use common\models\BibleExplanations;
 use common\models\BiblePassages;
 use common\models\BibleVerses;
@@ -12,7 +13,22 @@ class OnceController extends Controller
 {
     public function actionExplain(){
         foreach (ContentRepo::BOOKS['CUV'] as $k => $row){
+            $exit_mark = \Yii::$app->getRuntimePath().'/exit.lock';
+            if(file_exists($exit_mark)){
+                return;
+            }
             for($i = 1;$i<=$row['chapters']; $i++){
+                //如果已有 passages ，跳过
+                $exist_passage = BiblePassages::find()
+                    ->where([
+                        'version' => 'CUV',
+                        'book_id' => $k,
+                        'chapter_num' => $i,
+                    ])
+                    ->count();
+                if($exist_passage){
+                    continue;
+                }
                 $verses = BibleVerses::find()
                     ->where(['book_id' => $k , 'chapter_num' => $i])
                     ->all();
@@ -27,10 +43,7 @@ class OnceController extends Controller
 你是一位资深的圣经学者
 
 [任务]
-如下内容是《圣经》的 《{$row['name']}》的第{$i} 章，请按照各小节的含义分段，并分别讲解每一段。讲解内容包括：
-1. 历史背景解释
-2. 关键词语解析
-3. 属灵应用建议
+如下内容是《圣经》的 《{$row['name']}》的第{$i} 章，请按照各小节的含义分段，并分别讲解每一段。讲解内容应包括属灵应用的建议。
 
 如果你认为这些内容确实应该属于同一部分也没问题，不必强行分段。
 
@@ -53,14 +66,18 @@ class OnceController extends Controller
 
 
 [限制]
-- 解释范围限定在标记的上下文内
-- 避免过度引申
 - 保持教派中立
 
 [经文]
 {$contents}
 EOF;
-                echo $content;exit;
+                $llm = new LLMService();
+                $response = $llm->generate(LLMService::MODEL_ALI_QWEN , $content,[],'qwen-plus');
+                var_dump($response);
+                if(!empty($response['data'])){
+                    $this->saveLLMResponse($response['data']['content'] , 'CUV', $k , $i , 'qwen-plus');
+                }
+                echo $response['data']['content'],"####\n\n";
             }
         }
     }

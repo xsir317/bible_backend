@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\Request;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use yii\base\Exception;
 
 class TencentHunyuanAdapter extends Adapter
 {
@@ -13,9 +14,12 @@ class TencentHunyuanAdapter extends Adapter
 
     public function execute($prompt, $params , $model = 'deepseek-r1') {
         $client = new Client();
+        if(empty($model)){
+            $model = 'deepseek-r1';
+        }
 
         try {
-            $response = $client->post(self::API_ENDPOINT, [
+            $response = $client->post($this->get_endpoint($model), [
                 'headers' => [
                     'Authorization' => 'Bearer ' . \Yii::$app->params['tencentApiKey'],
                     'X-AppId' => \Yii::$app->params['tencentAppId']
@@ -60,5 +64,17 @@ class TencentHunyuanAdapter extends Adapter
                 'total_tokens' => $data['usage']['total_tokens'] ?? 0
             ]
         ];
+    }
+
+
+    private function get_endpoint($model){
+        $endpoints = [
+            'deepseek-r1' => 'https://hunyuan.tencent.com/api/v3/chat/completions'
+        ];
+        if(isset($endpoints[$model])){
+            return $endpoints[$model];
+        }
+
+        throw new Exception('not supported model:'.$model);
     }
 }
