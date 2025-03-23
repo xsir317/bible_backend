@@ -18,7 +18,7 @@ class OnceController extends Controller
             if(file_exists($exit_mark)){
                 return;
             }
-            if($k <= 19) continue;
+            if($k <= 19 || $k > 40) continue;
             for($i = 1;$i<=$row['chapters']; $i++){
                 //如果已有 passages ，跳过
                 $exist_passage = BiblePassages::find()
