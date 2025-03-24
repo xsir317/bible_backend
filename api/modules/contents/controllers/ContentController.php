@@ -7,6 +7,7 @@ use common\components\ResponseCode;
 use common\models\BibleExplanations;
 use common\models\BiblePassages;
 use common\models\BibleVerses;
+use common\models\UserReadingProgress;
 use common\repository\ContentRepo;
 
 /**
@@ -55,6 +56,10 @@ class ContentController extends ClientController
             ])
             ->asArray()
             ->all();
+        //记录阅读
+        if($this->_user()){
+            UserReadingProgress::doRead($this->_user()->id , $book_id , $chapter_id);
+        }
         return $this->renderJSON([
             'verses' => $verses,
             'explains' => $explains

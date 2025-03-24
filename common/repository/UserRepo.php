@@ -182,7 +182,7 @@ class UserRepo extends BaseRepo
         $auth->passwd = $pwd ? self::hash_pwd($pwd) : '';
         $auth->info = empty($detail) ? '' : json_encode($detail);
         $auth->created_at = $user->created_at;
-        $auth->deleted_at = time();
+        $auth->deleted_at = 0;
         $auth->save(0);
         return $user;
     }
