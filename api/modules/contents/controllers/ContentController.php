@@ -65,4 +65,37 @@ class ContentController extends ClientController
             'explains' => $explains
         ]);
     }
+
+    public function actionChaptersRead(){
+        $chapter_id = intval($this->get('chapter_id'));
+
+        return $this->renderJSON([
+            'history' => UserReadingProgress::getReadChapters($this->_user()->id , $chapter_id)
+        ]);
+    }
+
+    /**
+     * contents/content/reading-history
+     * 按日期返回book 名字、 最后阅读时间、 最后阅读的章，方便客户端展示和跳转
+     */
+    public function actionReadingHistory(){
+        $version = 'CUV';//TODO 以后得支持选择
+        if(!isset(ContentRepo::BOOKS[$version])){
+            return $this->renderJSON([] ,'not found' , ResponseCode::DATA_MISSING);
+        }
+        $history = UserReadingProgress::getReadBooks($this->_user()->id);
+
+        $return = [];
+        foreach ($history as $row){
+            $return[] = [
+                'updated_at' => $row['updated_at'],
+                'book_name' => ContentRepo::BOOKS[$version][$row['book_id']] ?? '',
+                'last_chapter_id' => $row['last_chapter_id'],
+            ];
+        }
+
+        return $this->renderJSON([
+            'history' => $return
+        ]);
+    }
 }
