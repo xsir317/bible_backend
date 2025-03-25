@@ -68,6 +68,9 @@ class ContentController extends ClientController
 
     public function actionChaptersRead(){
         $book_id = intval($this->get('book_id'));
+        if(!$this->_user()){
+            return $this->renderJSON([],"没有登录",ResponseCode::NOT_LOGIN);
+        }
 
         return $this->renderJSON([
             'history' => UserReadingProgress::getReadChapters($this->_user()->id , $book_id)
