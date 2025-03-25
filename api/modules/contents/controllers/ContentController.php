@@ -96,7 +96,7 @@ class ContentController extends ClientController
             $return[] = [
                 'updated_at' => $row['updated_at'],
                 'book_id' => $row['book_id'],
-                'book_name' => ContentRepo::BOOKS[$version][$row['book_id']] ?? '',
+                'book_name' => ContentRepo::BOOKS[$version][$row['book_id']]['name'] ?? '',
                 'last_chapter_id' => $row['last_chapter_id'],
             ];
         }
