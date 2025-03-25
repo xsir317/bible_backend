@@ -86,6 +86,9 @@ class ContentController extends ClientController
         if(!isset(ContentRepo::BOOKS[$version])){
             return $this->renderJSON([] ,'not found' , ResponseCode::DATA_MISSING);
         }
+        if(!$this->_user()){
+            return $this->renderJSON([],"没有登录",ResponseCode::NOT_LOGIN);
+        }
         $history = UserReadingProgress::getReadBooks($this->_user()->id);
 
         $return = [];
