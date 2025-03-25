@@ -9,5 +9,5 @@ abstract class Adapter
      * @param $params
      * @return array
      */
-    public function execute($prompt, $params , $model){}
+    abstract public function execute($prompt, $params , $model);
 }

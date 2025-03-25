@@ -30,7 +30,7 @@ class AliQwenAdapter extends Adapter
                     ],
                     'parameters' => array_merge([
                         'temperature' => 0.7,
-                        'max_tokens' => 1000
+                        'max_tokens' => 2000
                     ], $params)
                 ],
                 'http_errors' => false // 禁用自动抛出 4xx/5xx 异常
