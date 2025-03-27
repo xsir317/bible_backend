@@ -60,7 +60,7 @@ class CollectsController extends \api\components\ClientController
         $verse = Yii::$app->request->post('verse');
 
         if(!$book_id || !$chapter || !$verse){
-            return $this->renderJSON([],"参数错误",ResponseCode::PARAM_INVALID);
+            return $this->renderJSON([],"参数错误",ResponseCode::INPUT_ERROR);
         }
 
         // 检查经文是否存在
@@ -71,19 +71,19 @@ class CollectsController extends \api\components\ClientController
         ]);
 
         if(!$verseModel){
-            return $this->renderJSON([],"经文不存在",ResponseCode::PARAM_INVALID);
+            return $this->renderJSON([],"经文不存在",ResponseCode::INPUT_ERROR);
         }
 
         // 检查是否已收藏
         $exist = UserCollects::findOne([
             'uid' => $this->_user()->id,
             'book_id' => $book_id,
-            'chapter_id' => $chapter,
-            'verse_id' => $verse
+            'chapter_num' => $chapter,
+            'verse_num' => $verse
         ]);
 
         if($exist){
-            return $this->renderJSON([],"已经收藏过了",ResponseCode::PARAM_INVALID);
+            return $this->renderJSON([],"已经收藏过了",ResponseCode::DATA_INVALID);
         }
 
         $collect = new UserCollects();
@@ -97,7 +97,7 @@ class CollectsController extends \api\components\ClientController
             return $this->renderJSON(['id' => $collect->id]);
         }
 
-        return $this->renderJSON([],"收藏失败",ResponseCode::SYSTEM_ERROR);
+        return $this->renderJSON([],"收藏失败",ResponseCode::UNKNOWN_ERROR);
     }
 
     /**
@@ -116,14 +116,14 @@ class CollectsController extends \api\components\ClientController
         ]);
 
         if(!$collect){
-            return $this->renderJSON([],"收藏不存在",ResponseCode::PARAM_INVALID);
+            return $this->renderJSON([],"收藏不存在",ResponseCode::DATA_MISSING);
         }
 
         if($collect->delete()){
             return $this->renderJSON([]);
         }
 
-        return $this->renderJSON([],"删除失败",ResponseCode::SYSTEM_ERROR);
+        return $this->renderJSON([],"删除失败",ResponseCode::DATA_MISSING);
     }
 
     /**
@@ -139,14 +139,14 @@ class CollectsController extends \api\components\ClientController
         $verse = Yii::$app->request->get('verse');
 
         if(!$book_id || !$chapter || !$verse){
-            return $this->renderJSON([],"参数错误",ResponseCode::PARAM_INVALID);
+            return $this->renderJSON([],"参数错误",ResponseCode::INPUT_ERROR);
         }
 
         $exist = UserCollects::findOne([
             'uid' => $this->_user()->id,
             'book_id' => $book_id,
-            'chapter_id' => $chapter,
-            'verse_id' => $verse
+            'chapter_num' => $chapter,
+            'verse_num' => $verse
         ]);
 
         return $this->renderJSON(['is_collected' => $exist ? true : false]);

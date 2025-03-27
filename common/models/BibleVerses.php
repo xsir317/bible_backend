@@ -54,14 +54,4 @@ class BibleVerses extends \yii\db\ActiveRecord
             'content' => 'Content',
         ];
     }
-
-    /**
-     * Gets query for [[BibleExplanations]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBibleExplanations()
-    {
-        return $this->hasMany(BibleExplanations::class, ['verse_id' => 'id']);
-    }
 }

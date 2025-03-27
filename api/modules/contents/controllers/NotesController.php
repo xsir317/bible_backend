@@ -18,7 +18,7 @@ class NotesController extends \api\components\ClientController
         }
 
         $book_id = Yii::$app->request->get('book_id');
-        $chapter_id = Yii::$app->request->get('chapter_id');
+        $chapter_num = Yii::$app->request->get('chapter_num');
 
         $query = UserNotes::find()
             ->where(['uid' => $this->_user()->id]);
@@ -26,8 +26,8 @@ class NotesController extends \api\components\ClientController
         if ($book_id) {
             $query->andWhere(['book_id' => $book_id]);
         }
-        if ($chapter_id) {
-            $query->andWhere(['chapter_id' => $chapter_id]);
+        if ($chapter_num) {
+            $query->andWhere(['chapter_num' => $chapter_num]);
         }
 
         $notes = $query->orderBy(['created_at' => SORT_DESC])->all();
@@ -39,9 +39,9 @@ class NotesController extends \api\components\ClientController
             $result[] = [
                 'id' => $note->id,
                 'book_id' => $note->book_id,
-                'chapter_id' => $note->chapter_num,
-                'verse_id' => $note->verse_num,
-                'content' => json_decode($note->content_txt, true),
+                'chapter_num' => $note->chapter_num,
+                'verse_num' => $note->verse_num,
+                'content' => $note->getContent(),
                 'created_at' => $note->created_at
             ];
         }
@@ -71,8 +71,8 @@ class NotesController extends \api\components\ClientController
         return $this->renderJSON([
             'id' => $note->id,
             'book_id' => $note->book_id,
-            'chapter_id' => $note->chapter_num,
-            'verse_id' => $note->verse_num,
+            'chapter_num' => $note->chapter_num,
+            'verse_num' => $note->verse_num,
             'content' => json_decode($note->content_txt, true),
             'created_at' => $note->created_at
         ]);
@@ -88,11 +88,11 @@ class NotesController extends \api\components\ClientController
         }
 
         $book_id = Yii::$app->request->post('book_id');
-        $chapter_id = Yii::$app->request->post('chapter_id');
-        $verse_id = Yii::$app->request->post('verse_id');
+        $chapter_num = Yii::$app->request->post('chapter_num');
+        $verse_num = Yii::$app->request->post('verse_num');
         $content = Yii::$app->request->post('content');
 
-        if (!$book_id || !$chapter_id || !$verse_id || !$content) {
+        if (!$book_id || !$chapter_num || !$verse_num || !$content) {
             return $this->renderJSON([], "参数错误", ResponseCode::INPUT_ERROR);
         }
 
@@ -100,16 +100,16 @@ class NotesController extends \api\components\ClientController
         $note = UserNotes::findOne([
             'uid' => $this->_user()->id,
             'book_id' => $book_id,
-            'chapter_id' => $chapter_id,
-            'verse_id' => $verse_id
+            'chapter_num' => $chapter_num,
+            'verse_num' => $verse_num
         ]);
 
         if (!$note) {
             $note = new UserNotes();
             $note->uid = $this->_user()->id;
             $note->book_id = $book_id;
-            $note->chapter_num = $chapter_id;
-            $note->verse_num = $verse_id;
+            $note->chapter_num = $chapter_num;
+            $note->verse_num = $verse_num;
             $note->created_at = date('Y-m-d H:i:s');
         }
 

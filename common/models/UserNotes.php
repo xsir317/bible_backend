@@ -72,9 +72,13 @@ class UserNotes extends \yii\db\ActiveRecord
             ->where(['uid' => $uid,'book_id' => $book_id,'chapter_num' => $chapter_num])
             ->all();
         foreach ($q as $row){
-            $ret[$row->verse_num] = json_decode($row->content_txt ,1 );
+            $ret[$row->verse_num] = $row->getContent();
         }
 
         return $ret;
+    }
+
+    public function getContent(){
+        return json_decode($this->content_txt ,1 );
     }
 }
