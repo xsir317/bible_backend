@@ -7,6 +7,8 @@ use common\components\ResponseCode;
 use common\models\BibleExplanations;
 use common\models\BiblePassages;
 use common\models\BibleVerses;
+use common\models\UserCollects;
+use common\models\UserNotes;
 use common\models\UserReadingProgress;
 use common\repository\ContentRepo;
 
@@ -56,13 +58,19 @@ class ContentController extends ClientController
             ])
             ->asArray()
             ->all();
+        $notes = [];
+        $collect_verses = [];
         //记录阅读
         if($this->_user()){
             UserReadingProgress::doRead($this->_user()->id , $book_id , $chapter_id);
+            $notes = UserNotes::getUserNotes($this->_user()->id , $book_id , $chapter_id);
+            $collect_verses = UserCollects::getUserCollects($this->_user()->id , $book_id , $chapter_id);
         }
         return $this->renderJSON([
             'verses' => $verses,
-            'explains' => $explains
+            'explains' => $explains,
+            'notes' => $notes,
+            'collect_verses' => $collect_verses,
         ]);
     }
 
