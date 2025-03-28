@@ -55,9 +55,9 @@ class CollectsController extends \api\components\ClientController
             return $this->renderJSON([],"没有登录",ResponseCode::NOT_LOGIN);
         }
 
-        $book_id = Yii::$app->request->post('book_id');
-        $chapter = Yii::$app->request->post('chapter');
-        $verse = Yii::$app->request->post('verse');
+        $book_id = $this->get('book_id');
+        $chapter = $this->get('chapter');
+        $verse = $this->get('verse');
 
         if(!$book_id || !$chapter || !$verse){
             return $this->renderJSON([],"参数错误",ResponseCode::INPUT_ERROR);
@@ -108,40 +108,15 @@ class CollectsController extends \api\components\ClientController
             return $this->renderJSON([],"没有登录",ResponseCode::NOT_LOGIN);
         }
 
-        $id = Yii::$app->request->post('id');
-        
-        $collect = UserCollects::findOne([
-            'id' => $id,
-            'uid' => $this->_user()->id
-        ]);
-
-        if(!$collect){
-            return $this->renderJSON([],"收藏不存在",ResponseCode::DATA_MISSING);
-        }
-
-        if($collect->delete()){
-            return $this->renderJSON([]);
-        }
-
-        return $this->renderJSON([],"删除失败",ResponseCode::DATA_MISSING);
-    }
-
-    /**
-     * 检查是否已收藏
-     */
-    public function actionCheck(){
-        if(!$this->_user()){
-            return $this->renderJSON([],"没有登录",ResponseCode::NOT_LOGIN);
-        }
-
-        $book_id = Yii::$app->request->get('book_id');
-        $chapter = Yii::$app->request->get('chapter');
-        $verse = Yii::$app->request->get('verse');
+        $book_id = $this->get('book_id');
+        $chapter = $this->get('chapter');
+        $verse = $this->get('verse');
 
         if(!$book_id || !$chapter || !$verse){
             return $this->renderJSON([],"参数错误",ResponseCode::INPUT_ERROR);
         }
 
+        // 检查是否已收藏
         $exist = UserCollects::findOne([
             'uid' => $this->_user()->id,
             'book_id' => $book_id,
@@ -149,6 +124,14 @@ class CollectsController extends \api\components\ClientController
             'verse_num' => $verse
         ]);
 
-        return $this->renderJSON(['is_collected' => $exist ? true : false]);
+        if(!$exist){
+            return $this->renderJSON([],"收藏不存在",ResponseCode::DATA_MISSING);
+        }
+
+        if($exist->delete()){
+            return $this->renderJSON([]);
+        }
+
+        return $this->renderJSON([],"删除失败",ResponseCode::DATA_MISSING);
     }
 }

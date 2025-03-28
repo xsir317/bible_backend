@@ -30,7 +30,7 @@ class NotesController extends \api\components\ClientController
             $query->andWhere(['chapter_num' => $chapter_num]);
         }
 
-        $notes = $query->orderBy(['created_at' => SORT_DESC])->all();
+        $notes = $query->orderBy(['id' => SORT_DESC])->all();
         $result = [];
         /**
          * @var $note UserNotes
@@ -58,7 +58,7 @@ class NotesController extends \api\components\ClientController
             return $this->renderJSON([], "没有登录", ResponseCode::NOT_LOGIN);
         }
 
-        $id = Yii::$app->request->get('id');
+        $id = $this->get('id');
         $note = UserNotes::findOne([
             'id' => $id,
             'uid' => $this->_user()->id
@@ -73,7 +73,7 @@ class NotesController extends \api\components\ClientController
             'book_id' => $note->book_id,
             'chapter_num' => $note->chapter_num,
             'verse_num' => $note->verse_num,
-            'content' => json_decode($note->content_txt, true),
+            'content' => $note->getContent(),
             'created_at' => $note->created_at
         ]);
     }
@@ -87,10 +87,10 @@ class NotesController extends \api\components\ClientController
             return $this->renderJSON([], "没有登录", ResponseCode::NOT_LOGIN);
         }
 
-        $book_id = Yii::$app->request->post('book_id');
-        $chapter_num = Yii::$app->request->post('chapter_num');
-        $verse_num = Yii::$app->request->post('verse_num');
-        $content = Yii::$app->request->post('content');
+        $book_id = $this->get('book_id');
+        $chapter_num = $this->get('chapter_num');
+        $verse_num = $this->get('verse_num');
+        $content = $this->get('content');
 
         if (!$book_id || !$chapter_num || !$verse_num || !$content) {
             return $this->renderJSON([], "参数错误", ResponseCode::INPUT_ERROR);
@@ -131,7 +131,7 @@ class NotesController extends \api\components\ClientController
             return $this->renderJSON([], "没有登录", ResponseCode::NOT_LOGIN);
         }
 
-        $id = Yii::$app->request->post('id');
+        $id = $this->get('id');
         
         $note = UserNotes::findOne([
             'id' => $id,
