@@ -16,9 +16,11 @@ class NotesController extends \api\components\ClientController
         if (!$this->_user()) {
             return $this->renderJSON([], "没有登录", ResponseCode::NOT_LOGIN);
         }
+        $page = $this->get('page',1);
+        $pageSize = 20;
 
-        $book_id = Yii::$app->request->get('book_id');
-        $chapter_num = Yii::$app->request->get('chapter_num');
+        $book_id = $this->get('book_id');
+        $chapter_num = $this->get('chapter_num');
 
         $query = UserNotes::find()
             ->where(['uid' => $this->_user()->id]);
@@ -30,7 +32,16 @@ class NotesController extends \api\components\ClientController
             $query->andWhere(['chapter_num' => $chapter_num]);
         }
 
-        $notes = $query->orderBy(['id' => SORT_DESC])->all();
+        $notes = $query
+            ->orderBy(['id' => SORT_DESC])
+            ->limit($pageSize+1)
+            ->offset($pageSize * ($page - 1))
+            ->all();
+        $has_next = 0;
+        if(count($notes) > $pageSize){
+            $has_next = 1;
+            array_pop($notes);
+        }
         $result = [];
         /**
          * @var $note UserNotes
@@ -46,7 +57,10 @@ class NotesController extends \api\components\ClientController
             ];
         }
 
-        return $this->renderJSON($result);
+        return $this->renderJSON([
+            'list' => $result,
+            'has_next' => $has_next
+        ]);
     }
 
     /**
