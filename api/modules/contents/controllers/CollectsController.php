@@ -15,11 +15,20 @@ class CollectsController extends \api\components\ClientController
         if(!$this->_user()){
             return $this->renderJSON([],"没有登录",ResponseCode::NOT_LOGIN);
         }
+        $page = $this->get('page',1);
+        $pageSize = 20;
 
         $collects = UserCollects::find()
             ->where(['uid' => $this->_user()->id])
-            ->orderBy(['created_at' => SORT_DESC])
+            ->orderBy(['id' => SORT_DESC])
+            ->limit($pageSize+1)
+            ->offset($pageSize * ($page - 1))
             ->all();
+        $has_next = 0;
+        if(count($collects) > $pageSize){
+            $has_next = 1;
+            array_pop($collects);
+        }
 
         $result = [];
         /**
@@ -44,7 +53,10 @@ class CollectsController extends \api\components\ClientController
             }
         }
 
-        return $this->renderJSON($result);
+        return $this->renderJSON([
+            'list' => $result,
+            'has_next' => $has_next
+        ]);
     }
 
     /**
@@ -91,7 +103,7 @@ class CollectsController extends \api\components\ClientController
         $collect->book_id = $book_id;
         $collect->chapter_num = $chapter;
         $collect->verse_num = $verse;
-        $collect->created_at = time();
+        $collect->created_at = date('Y-m-d H:i:s');
 
         if($collect->save()){
             return $this->renderJSON(['id' => $collect->id]);
