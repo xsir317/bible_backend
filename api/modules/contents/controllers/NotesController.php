@@ -4,6 +4,7 @@ namespace api\modules\contents\controllers;
 
 use common\models\UserNotes;
 use common\components\ResponseCode;
+use common\repository\ContentRepo;
 use Yii;
 
 class NotesController extends \api\components\ClientController
@@ -16,6 +17,7 @@ class NotesController extends \api\components\ClientController
         if (!$this->_user()) {
             return $this->renderJSON([], "没有登录", ResponseCode::NOT_LOGIN);
         }
+        $version = 'CUV';
         $page = $this->get('page',1);
         $pageSize = 20;
 
@@ -50,6 +52,7 @@ class NotesController extends \api\components\ClientController
             $result[] = [
                 'id' => $note->id,
                 'book_id' => $note->book_id,
+                'book_name' => ContentRepo::BOOKS[$version][$note->book_id]['name'] ?? '',
                 'chapter_num' => $note->chapter_num,
                 'verse_num' => $note->verse_num,
                 'content' => $note->getContent(),

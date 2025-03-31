@@ -4,6 +4,7 @@ namespace api\modules\contents\controllers;
 use common\components\ResponseCode;
 use common\models\UserCollects;
 use common\models\BibleVerses;
+use common\repository\ContentRepo;
 use Yii;
 
 class CollectsController extends \api\components\ClientController
@@ -15,6 +16,7 @@ class CollectsController extends \api\components\ClientController
         if(!$this->_user()){
             return $this->renderJSON([],"没有登录",ResponseCode::NOT_LOGIN);
         }
+        $version = 'CUV';
         $page = $this->get('page',1);
         $pageSize = 20;
 
@@ -45,6 +47,7 @@ class CollectsController extends \api\components\ClientController
                 $result[] = [
                     'id' => $collect->id,
                     'book_id' => $collect->book_id,
+                    'book_name' => ContentRepo::BOOKS[$version][$collect->book_id]['name'] ?? '',
                     'chapter' => $collect->chapter_num,
                     'verse' => $collect->verse_num,
                     'content' => $verse->content,
