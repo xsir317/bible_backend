@@ -18,11 +18,21 @@ class CollectsController extends \api\components\ClientController
         }
         $version = 'CUV';
         $page = $this->get('page',1);
+
+        $book_id = $this->get('book_id');
+        $chapter_num = $this->get('chapter_num');
         $pageSize = 20;
 
-        $collects = UserCollects::find()
-            ->where(['uid' => $this->_user()->id])
-            ->orderBy(['id' => SORT_DESC])
+        $query = UserCollects::find()
+            ->where(['uid' => $this->_user()->id]);
+
+        if ($book_id) {
+            $query->andWhere(['book_id' => $book_id]);
+        }
+        if ($chapter_num) {
+            $query->andWhere(['chapter_num' => $chapter_num]);
+        }
+        $collects = $query->orderBy(['id' => SORT_DESC])
             ->limit($pageSize+1)
             ->offset($pageSize * ($page - 1))
             ->all();
