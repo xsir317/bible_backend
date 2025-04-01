@@ -310,6 +310,7 @@ class UserRepo extends BaseRepo
             'id' => $user->id,
             'nickname' => $user->nickname,
             'coins' => $user->coins,
+            'invite_code' => $user->getInviteCode(),
             'avatar' => '/avatar1.png',
         ];
     }
