@@ -66,9 +66,8 @@ class ContentController extends ClientController
             $notes = UserNotes::getUserNotes($this->_user()->id , $book_id , $chapter_id);
             $collect_verses = UserCollects::getUserCollects($this->_user()->id , $book_id , $chapter_id);
         }
-        $book_meta = ContentRepo::getBookMeta('CUV' , $book_id);
         return $this->renderJSON([
-            'book_name' => $book_meta['name'] ?? '',
+            'book_meta' => ContentRepo::getBookMeta('CUV' , $book_id),
             'verses' => $verses,
             'explains' => $explains,
             'notes' => $notes,
