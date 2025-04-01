@@ -99,7 +99,7 @@ class IdentityController extends ClientController
 
         ClientAuthHelper::setCurrUser($user->id);
         return $this->renderJSON([
-            'user' => UserRepo::single_user_query($this->_user()->id)
+            'user' => UserRepo::single_user_query($user->id)
         ]);
     }
 
@@ -121,7 +121,7 @@ class IdentityController extends ClientController
 
         ClientAuthHelper::setCurrUser($user->id);
         return $this->renderJSON([
-            'user' => $user->toArray(['id' ,'nickname'])
+            'user' => UserRepo::getDetail($user->id)
         ]);
     }
 
@@ -131,40 +131,6 @@ class IdentityController extends ClientController
     public function actionWxLogin()
     {
 
-    }
-
-    public function actionDetail()
-    {
-        $id = intval($this->get('id'));
-        if(!$id)
-        {
-            return $this->renderJSON([],"没有id",ResponseCode::INPUT_ERROR);
-        }
-
-        $user = UserRepo::single_user_query($id);
-        $detail = [];
-        if($user){
-            $detail = [
-                'id' => $user->id,
-                'nickname' => $user->nickname,
-                'invite_code' => $user->getInviteCode(),
-            ];
-        }
-        return $this->renderJSON([
-            'user' => $detail,
-        ]);
-    }
-
-    public function actionInfo()
-    {
-        if(!$this->_user())
-        {
-            return $this->renderJSON([],"没有登录",ResponseCode::NOT_LOGIN);
-        }
-
-        return $this->renderJSON([
-            'user' => UserRepo::user_basic($this->_user()->id),
-        ]);
     }
 
     public function actionSms()
