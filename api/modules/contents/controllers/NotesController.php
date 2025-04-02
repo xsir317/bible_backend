@@ -2,6 +2,7 @@
 
 namespace api\modules\contents\controllers;
 
+use common\components\DistributedLock;
 use common\models\UserNotes;
 use common\components\ResponseCode;
 use common\repository\ContentRepo;
@@ -112,6 +113,9 @@ class NotesController extends \api\components\ClientController
         if (!$book_id || !$chapter_num || !$verse_num || !$content) {
             return $this->renderJSON([], "参数错误", ResponseCode::INPUT_ERROR);
         }
+        if(!DistributedLock::getLock("note:".$this->_user()->id)){
+            return $this->renderJSON();
+        }
 
         // 查找是否已存在笔记
         $note = UserNotes::findOne([
@@ -149,7 +153,10 @@ class NotesController extends \api\components\ClientController
         }
 
         $id = $this->get('id');
-        
+
+        if(!DistributedLock::getLock("del_note:".$this->_user()->id)){
+            return $this->renderJSON();
+        }
         $note = UserNotes::findOne([
             'id' => $id,
             'uid' => $this->_user()->id

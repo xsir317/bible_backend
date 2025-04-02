@@ -1,6 +1,7 @@
 <?php
 
 namespace api\modules\contents\controllers;
+use common\components\DistributedLock;
 use common\components\ResponseCode;
 use common\models\UserCollects;
 use common\models\BibleVerses;
@@ -87,6 +88,9 @@ class CollectsController extends \api\components\ClientController
         if(!$book_id || !$chapter || !$verse){
             return $this->renderJSON([],"参数错误",ResponseCode::INPUT_ERROR);
         }
+        if(!DistributedLock::getLock("collect:".$this->_user()->id)){
+            return $this->renderJSON();
+        }
 
         // 检查经文是否存在
         $verseModel = BibleVerses::findOne([
@@ -139,6 +143,9 @@ class CollectsController extends \api\components\ClientController
 
         if(!$book_id || !$chapter || !$verse){
             return $this->renderJSON([],"参数错误",ResponseCode::INPUT_ERROR);
+        }
+        if(!DistributedLock::getLock("del_collect:".$this->_user()->id)){
+            return $this->renderJSON();
         }
 
         // 检查是否已收藏
